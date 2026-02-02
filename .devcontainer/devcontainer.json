@@ -1,24 +1,49 @@
 {
-    "name": "Data Engineering with Rust",
+    "name": "Data Engineering with Rust - AWS",
     "image": "mcr.microsoft.com/devcontainers/rust:1-bookworm",
-    "remoteUser": "root",
     "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": {
+        "ghcr.io/devcontainers/features/common-utils:1": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "installYarn": false,
+            "installOhMyZsh": true,
             "upgradePackages": false
         },
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-        "ghcr.io/devcontainers/features/aws-cli:1": {},
-        "ghcr.io/devcontainers/features/terraform:1": {}
+        "ghcr.io/devcontainers/features/aws-cli:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/terraform:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "version": "latest",
+            "installDockerCompose": true
+        }
     },
+    // Essential fix to prevent apt-get update from crashing during the semester
+    "onCreateCommand": "rm -f /etc/apt/sources.list.d/yarn.list",
+    // Optimized for Big Data: hyperfine for benchmarking, xsv for CSV processing
+    "postCreateCommand": "apt-get update && apt-get install -y jq htop && cargo install --locked hyperfine xsv",
     "customizations": {
         "vscode": {
             "extensions": [
                 "rust-lang.rust-analyzer",
                 "tamasfe.even-better-toml",
                 "serayuzgur.crates",
-                "vadimcn.vscode-lldb"
-            ]
+                "vadimcn.vscode-lldb",
+                "amazonwebservices.aws-toolkit-vscode",
+                "ms-azuretools.vscode-docker",
+                "mtxr.sqltools",
+                "mechatroner.rainbow-csv",
+                "dvirtz.parquet-viewer"
+            ],
+            "settings": {
+                "rust-analyzer.checkOnSave.command": "clippy",
+                "editor.formatOnSave": true,
+                "evenBetterToml.formatter.alignEntries": true
+            }
         }
     },
-    "postCreateCommand": "apt-get update && apt-get install -y jq htop && cargo install --locked hyperfine && cargo install --locked xsv"
+    "remoteUser": "root",
+    "forwardPorts": [8080, 8081]
 }
